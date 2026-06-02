@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#131210" />
+<meta name="description" content="Datenschutzerklärung der Ball together App" />
+<title>Datenschutz & Privacy — Ball together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --font: 'Outfit', system-ui, -apple-system, sans-serif;
+    --r-md: 18px; --r-lg: 24px; --r-pill: 999px;
+  }
+  [data-theme="light"] {
+    --bg: #f1efe9; --bg-2: #eae7df;
+    --surface: #ffffff; --surface-2: #faf8f4; --surface-3: #f0ede6;
+    --text: #1b1a16; --text-2: #56524b; --muted: #8c867b;
+    --border: rgba(20,18,14,0.10); --border-2: rgba(20,18,14,0.14);
+    --orange: #e7672a; --orange-soft: rgba(231,103,42,0.12); --on-orange: #fff;
+    --glass: rgba(255,255,255,0.7); --glass-border: rgba(255,255,255,0.8);
+    --shadow: 0 14px 40px rgba(20,18,14,0.10);
+  }
+  [data-theme="dark"] {
+    --bg: #131210; --bg-2: #100f0d;
+    --surface: #1d1b17; --surface-2: #25221d; --surface-3: #2e2a24;
+    --text: #f6f3ed; --text-2: #c4beb3; --muted: #8c867b;
+    --border: rgba(255,255,255,0.09); --border-2: rgba(255,255,255,0.14);
+    --orange: #f5824a; --orange-soft: rgba(245,130,74,0.16); --on-orange: #1b1208;
+    --glass: rgba(29,27,23,0.72); --glass-border: rgba(255,255,255,0.09);
+    --shadow: 0 18px 50px rgba(0,0,0,0.55);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; font-family: var(--font); color: var(--text);
+    background:
+      radial-gradient(120% 60% at 50% -5%, var(--orange-soft), transparent 45%),
+      linear-gradient(180deg, var(--bg), var(--bg-2));
+    background-attachment: fixed;
+    min-height: 100vh; line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--orange); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 22px 80px; }
+
+  /* top bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 760px; margin: 0 auto; padding: 13px 22px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 17px; letter-spacing: -0.3px; white-space: nowrap; }
+  .ball { width: 30px; height: 30px; flex-shrink: 0; }
+  .theme-btn {
+    margin-left: auto; width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: transform .12s, background .15s;
+  }
+  .theme-btn:active { transform: scale(0.92); }
+
+  /* hero */
+  header.hero { padding: 46px 0 26px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 13px;
+    border-radius: var(--r-pill); background: var(--orange-soft); color: var(--orange);
+    font-size: 12.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+  }
+  h1 { font-size: clamp(32px, 7vw, 46px); font-weight: 800; letter-spacing: -1.2px; margin: 16px 0 8px; line-height: 1.05; }
+  .updated { color: var(--muted); font-size: 14.5px; font-weight: 500; }
+
+  /* TOC */
+  .toc {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+    box-shadow: var(--shadow); padding: 20px 22px; margin: 26px 0 40px;
+  }
+  .toc h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 0 0 12px; }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: toc; columns: 2; column-gap: 28px; }
+  .toc li { counter-increment: toc; margin: 0 0 9px; break-inside: avoid; }
+  .toc a { color: var(--text-2); font-weight: 600; font-size: 14.5px; display: flex; gap: 9px; }
+  .toc a::before { content: counter(toc, decimal-leading-zero); color: var(--orange); font-variant-numeric: tabular-nums; }
+  .toc a:hover { color: var(--orange); text-decoration: none; }
+  @media (max-width: 560px) { .toc ol { columns: 1; } }
+
+  /* sections */
+  section { margin: 0 0 40px; scroll-margin-top: 80px; }
+  section > h2 {
+    font-size: 23px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 14px;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  section > h2 .num {
+    font-size: 14px; font-weight: 800; color: var(--orange);
+    font-variant-numeric: tabular-nums; flex-shrink: 0;
+  }
+  h3 { font-size: 16.5px; font-weight: 700; margin: 22px 0 6px; }
+  p { margin: 0 0 14px; color: var(--text-2); }
+  p strong, li strong { color: var(--text); font-weight: 700; }
+  ul { margin: 0 0 14px; padding-left: 4px; list-style: none; }
+  ul li { position: relative; padding-left: 24px; margin-bottom: 9px; color: var(--text-2); }
+  ul li::before {
+    content: ''; position: absolute; left: 4px; top: 10px;
+    width: 7px; height: 7px; border-radius: 2px; background: var(--orange); transform: rotate(45deg);
+  }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+    box-shadow: var(--shadow); padding: 22px 24px;
+  }
+  .callout {
+    background: var(--orange-soft); border: 1px solid transparent; border-radius: var(--r-md);
+    padding: 16px 18px; margin: 0 0 14px; color: var(--text-2); font-size: 14.5px;
+  }
+  .callout strong { color: var(--orange); }
+  .fill { color: var(--orange); font-weight: 700; background: var(--orange-soft); padding: 1px 7px; border-radius: 6px; }
+
+  /* data table */
+  .dtable { border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; margin: 4px 0 14px; }
+  .drow { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid var(--border); }
+  .drow:last-child { border-bottom: none; }
+  .drow > div { padding: 12px 16px; font-size: 14px; }
+  .drow > div:first-child { font-weight: 700; color: var(--text); background: var(--surface-2); border-right: 1px solid var(--border); }
+  .drow > div:last-child { color: var(--text-2); }
+
+  footer {
+    border-top: 1px solid var(--border); padding-top: 26px; margin-top: 8px;
+    color: var(--muted); font-size: 13.5px; text-align: center;
+  }
+  .totop {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 14px;
+    color: var(--orange); font-weight: 700; font-size: 14px;
+  }
+</style>
+</head>
+<body data-theme="dark">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <svg class="ball" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="var(--orange)"/><g fill="none" stroke="var(--on-orange)" stroke-width="2.1" opacity="0.92"><path d="M3 24h42"/><path d="M24 3v42"/><path d="M9 9c7 6 7 24 0 30"/><path d="M39 9c-7 6-7 24 0 30"/></g></svg>
+        Ball together
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="Darstellung wechseln">
+        <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <header class="hero">
+      <span class="eyebrow">Rechtliches</span>
+      <h1>Datenschutz&shy;erklärung</h1>
+      <div class="updated">Zuletzt aktualisiert: 2. Juni 2026 · Version 1.0</div>
+    </header>
+
+    <div class="callout">
+      <strong>Hinweis:</strong> Diese Datenschutzerklärung ist eine sorgfältig erstellte Vorlage für die App <strong>Ball together</strong>. Ersetze alle <span class="fill">orange markierten</span> Platzhalter durch deine echten Angaben und lass das Dokument vor der Veröffentlichung anwaltlich bzw. von einem Datenschutzbeauftragten prüfen.
+    </div>
+
+    <nav class="toc">
+      <h2>Inhalt</h2>
+      <ol>
+        <li><a href="#verantwortlicher">Verantwortlicher</a></li>
+        <li><a href="#ueberblick">Überblick</a></li>
+        <li><a href="#daten">Welche Daten wir verarbeiten</a></li>
+        <li><a href="#zwecke">Zwecke & Rechtsgrundlagen</a></li>
+        <li><a href="#konto">Konto & Anmeldung</a></li>
+        <li><a href="#standort">Standort & Karte</a></li>
+        <li><a href="#chat">Chat & Anmeldungen</a></li>
+        <li><a href="#dienste">Dienstleister</a></li>
+        <li><a href="#speicherdauer">Speicherdauer</a></li>
+        <li><a href="#rechte">Deine Rechte</a></li>
+        <li><a href="#sicherheit">Sicherheit</a></li>
+        <li><a href="#kinder">Minderjährige</a></li>
+        <li><a href="#aenderungen">Änderungen</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ol>
+    </nav>
+
+    <section id="verantwortlicher">
+      <h2><span class="num">01</span> Verantwortlicher</h2>
+      <p>Verantwortlich für die Datenverarbeitung in der App „Ball together" im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:</p>
+      <div class="card">
+        <p style="margin:0">
+          <span class="fill">[Dein Name / Firmenname]</span><br>
+          <span class="fill">[Straße &amp; Hausnummer]</span><br>
+          <span class="fill">[PLZ Ort, Deutschland]</span><br><br>
+          E-Mail: <span class="fill">[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8befeee2e5eecbeee6eae2e7a5efee">[email&#160;protected]</a>]</span><br>
+          <span class="fill">[ggf. Telefonnummer]</span>
+        </p>
+      </div>
+      <p>Einen Datenschutzbeauftragten haben wir <span class="fill">[bestellt: Name &amp; Kontakt / nicht bestellt, da gesetzlich nicht erforderlich]</span>.</p>
+    </section>
+
+    <section id="ueberblick">
+      <h2><span class="num">02</span> Überblick</h2>
+      <p>Ball together ist eine Community-App, mit der Basketballer:innen in Deutschland Courts in ihrer Umgebung finden, sich für ein gemeinsames Spiel („Zock") an einem Court anmelden, miteinander chatten und – als Pro-Mitglied – eigene Turniere und Events veranstalten können.</p>
+      <p>Wir verarbeiten personenbezogene Daten nur, soweit dies zur Bereitstellung dieser Funktionen erforderlich ist. Wir verkaufen deine Daten nicht und nutzen sie nicht für Werbung Dritter.</p>
+    </section>
+
+    <section id="daten">
+      <h2><span class="num">03</span> Welche Daten wir verarbeiten</h2>
+      <h3>a) Konto- & Profildaten</h3>
+      <ul>
+        <li>E-Mail-Adresse (Pflicht für die Anmeldung)</li>
+        <li>Bei Google-Login: deine Google-Konto-ID, Name und Profilbild, soweit von Google bereitgestellt</li>
+        <li>Profilangaben: Name/Spitzname, Alter, Körpergröße, selbst eingeschätztes Skill-Level, Verein (optional), Profilbild (optional)</li>
+        <li>Pro-Status (Mitgliedschaft ja/nein)</li>
+      </ul>
+      <h3>b) Nutzungsdaten</h3>
+      <ul>
+        <li>Court-Anmeldungen („Ich spiele hier"), inkl. Zeitpunkt</li>
+        <li>Chat-Nachrichten zu Courts und Events</li>
+        <li>Von dir erstellte Events/Turniere (als Pro-Mitglied)</li>
+      </ul>
+      <h3>c) Technische Daten</h3>
+      <ul>
+        <li>Zugriffs- und Verbindungsdaten (z.B. IP-Adresse, Zeitstempel), die beim Betrieb des Backends technisch anfallen</li>
+        <li>Geräteinformationen, soweit für Betrieb und Sicherheit erforderlich</li>
+      </ul>
+      <h3>d) Standortdaten</h3>
+      <p>Zur Anzeige von Courts in deiner Nähe kann die App – nur mit deiner Zustimmung – auf deinen ungefähren oder genauen Standort zugreifen. Du kannst die App auch ohne Standortfreigabe nutzen; in diesem Fall wird eine Standardregion (z.B. Berlin) angezeigt.</p>
+    </section>
+
+    <section id="zwecke">
+      <h2><span class="num">04</span> Zwecke & Rechtsgrundlagen</h2>
+      <div class="dtable">
+        <div class="drow"><div>Konto & Login</div><div>Vertragserfüllung – Art. 6 Abs. 1 lit. b DSGVO</div></div>
+        <div class="drow"><div>Profil & Matching</div><div>Vertragserfüllung – Art. 6 Abs. 1 lit. b DSGVO</div></div>
+        <div class="drow"><div>Standort</div><div>Einwilligung – Art. 6 Abs. 1 lit. a DSGVO</div></div>
+        <div class="drow"><div>Chat & Anmeldungen</div><div>Vertragserfüllung – Art. 6 Abs. 1 lit. b DSGVO</div></div>
+        <div class="drow"><div>Betrieb & Sicherheit</div><div>Berechtigtes Interesse – Art. 6 Abs. 1 lit. f DSGVO</div></div>
+        <div class="drow"><div>Pro-Mitgliedschaft / Zahlung</div><div>Vertragserfüllung – Art. 6 Abs. 1 lit. b DSGVO</div></div>
+      </div>
+    </section>
+
+    <section id="konto">
+      <h2><span class="num">05</span> Konto & Anmeldung</h2>
+      <p>Für die Nutzung benötigst du ein Konto. Die Anmeldung erfolgt per E-Mail und Passwort oder über deinen Google-Account. Die Authentifizierung und Speicherung der Konto- und Profildaten erfolgt über unseren Dienstleister Supabase (siehe Abschnitt 8).</p>
+      <p>Beim Google-Login erhalten wir nur die Daten, die du freigibst (i.d.R. E-Mail, Name, Profilbild). Es gelten zusätzlich die <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzbestimmungen von Google</a>.</p>
+    </section>
+
+    <section id="standort">
+      <h2><span class="num">06</span> Standort & Kartendarstellung</h2>
+      <p>Die Karte wird mit <strong>Leaflet</strong> und Kartenkacheln von <strong>OpenStreetMap</strong> bzw. <strong>CARTO</strong> dargestellt. Beim Laden der Karte wird deine IP-Adresse technisch an diese Anbieter übertragen, um die Kacheln auszuliefern.</p>
+      <ul>
+        <li><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></li>
+        <li><a href="https://carto.com/privacy/" target="_blank" rel="noopener">CARTO</a></li>
+      </ul>
+      <p>Deine Standortfreigabe kannst du jederzeit in den Geräteeinstellungen widerrufen.</p>
+    </section>
+
+    <section id="chat">
+      <h2><span class="num">07</span> Chat, Anmeldungen & Sichtbarkeit</h2>
+      <p>Wenn du dich an einem Court anmeldest oder eine Nachricht schreibst, sind dein Name/Spitzname, dein Profilbild und dein Skill-Level für andere angemeldete Nutzer:innen dieses Courts bzw. Events sichtbar. Bitte teile im Chat keine sensiblen personenbezogenen Daten.</p>
+      <p>Chat-Nachrichten werden gespeichert, um den Verlauf für die Teilnehmenden anzuzeigen.</p>
+    </section>
+
+    <section id="dienste">
+      <h2><span class="num">08</span> Eingesetzte Dienstleister</h2>
+      <h3>Supabase (Backend, Auth, Datenbank)</h3>
+      <p>Wir nutzen Supabase als Backend für Authentifizierung, Datenbank und Echtzeit-Funktionen. Das Projekt wird in der Region <strong>EU (Frankfurt, Deutschland)</strong> betrieben. Anbieter: Supabase, Inc. Mit dem Anbieter besteht bzw. wird ein Auftragsverarbeitungsvertrag (Art. 28 DSGVO) geschlossen. Weitere Infos: <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>.</p>
+      <h3>Karten & Schriften</h3>
+      <p>Für Kartenkacheln (OpenStreetMap/CARTO) und Web-Schriften (Google Fonts) können beim Laden Verbindungsdaten an die jeweiligen Anbieter übermittelt werden. <span class="fill">[Falls du Schriften lokal einbindest, kannst du diesen Hinweis anpassen.]</span></p>
+      <h3>App-Stores / Zahlungen</h3>
+      <p>Die Pro-Mitgliedschaft wird ggf. über den <span class="fill">[Google Play Store / Apple App Store / Zahlungsdienstleister]</span> abgewickelt. Die Zahlungsdaten verarbeitet der jeweilige Anbieter eigenverantwortlich; wir erhalten lediglich den Status deiner Mitgliedschaft.</p>
+    </section>
+
+    <section id="speicherdauer">
+      <h2><span class="num">09</span> Speicherdauer</h2>
+      <ul>
+        <li><strong>Konto- & Profildaten:</strong> bis zur Löschung deines Kontos.</li>
+        <li><strong>Chat & Anmeldungen:</strong> solange für die Funktion erforderlich bzw. bis zur Löschung deines Kontos.</li>
+        <li><strong>Technische Logs:</strong> nur für kurze Zeit zur Sicherstellung des Betriebs.</li>
+      </ul>
+      <p>Gesetzliche Aufbewahrungspflichten (z.B. bei Zahlungen) bleiben unberührt.</p>
+    </section>
+
+    <section id="rechte">
+      <h2><span class="num">10</span> Deine Rechte</h2>
+      <p>Dir stehen nach der DSGVO folgende Rechte zu:</p>
+      <ul>
+        <li>Auskunft (Art. 15), Berichtigung (Art. 16) und Löschung (Art. 17)</li>
+        <li>Einschränkung der Verarbeitung (Art. 18)</li>
+        <li>Datenübertragbarkeit (Art. 20)</li>
+        <li>Widerspruch gegen Verarbeitungen auf Basis berechtigter Interessen (Art. 21)</li>
+        <li>Widerruf erteilter Einwilligungen mit Wirkung für die Zukunft (Art. 7 Abs. 3)</li>
+      </ul>
+      <p>Viele Angaben kannst du direkt im Profil ändern; dein Konto kannst du in der App bzw. auf Anfrage löschen lassen. Zudem hast du ein <strong>Beschwerderecht bei einer Aufsichtsbehörde</strong> (Art. 77 DSGVO), z.B. der Datenschutzbehörde deines Bundeslandes.</p>
+    </section>
+
+    <section id="sicherheit">
+      <h2><span class="num">11</span> Datensicherheit</h2>
+      <p>Die Übertragung erfolgt verschlüsselt (TLS/HTTPS). Der Zugriff auf Daten ist über Zugriffsregeln (Row Level Security) so beschränkt, dass Nutzer:innen grundsätzlich nur ihre eigenen Daten ändern können. Wir treffen angemessene technische und organisatorische Maßnahmen zum Schutz deiner Daten.</p>
+    </section>
+
+    <section id="kinder">
+      <h2><span class="num">12</span> Minderjährige</h2>
+      <p>Die App richtet sich an Nutzer:innen ab <span class="fill">[z.B. 16 Jahren]</span>. Jüngere Personen dürfen die App nur mit Einwilligung der Erziehungsberechtigten nutzen. Wir erheben nicht wissentlich Daten von Kindern ohne erforderliche Einwilligung.</p>
+    </section>
+
+    <section id="aenderungen">
+      <h2><span class="num">13</span> Änderungen dieser Erklärung</h2>
+      <p>Wir passen diese Datenschutzerklärung an, wenn sich die App oder die rechtlichen Rahmenbedingungen ändern. Die jeweils aktuelle Version ist in der App und unter dieser Adresse abrufbar.</p>
+    </section>
+
+    <section id="kontakt">
+      <h2><span class="num">14</span> Kontakt</h2>
+      <p>Bei Fragen zum Datenschutz erreichst du uns unter:</p>
+      <div class="card">
+        <p style="margin:0">
+          <span class="fill">[Dein Name / Firmenname]</span><br>
+          E-Mail: <span class="fill">[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9bdb8adbcb7aabab1acada399bdbcb0b7bcf4bdb6b4b8b0b7f7bdbc">[email&#160;protected]</a>]</span>
+        </p>
+      </div>
+      <a class="totop" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Nach oben</a>
+    </section>
+
+    <footer>
+      © 2026 Ball together · Datenschutzerklärung v1.0<br>
+      Vorlage — bitte vor Veröffentlichung rechtlich prüfen lassen.
+    </footer>
+  </div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  (function () {
+    var SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4 12H1.5M22.5 12H20M5.2 5.2 6.9 6.9M17.1 17.1l1.7 1.7M18.8 5.2 17.1 6.9M6.9 17.1 5.2 18.8"/>';
+    var MOON = '<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3.2a6.6 6.6 0 0 0 9.8 9.6Z"/>';
+    var body = document.body, icon = document.getElementById('themeIcon');
+    function apply(t) {
+      body.setAttribute('data-theme', t);
+      icon.innerHTML = t === 'dark' ? SUN : MOON;
+      document.querySelector('meta[name=theme-color]').setAttribute('content', t === 'dark' ? '#131210' : '#f1efe9');
+      try { localStorage.setItem('bt_legal_theme', t); } catch (e) {}
+    }
+    var saved = null;
+    try { saved = localStorage.getItem('bt_legal_theme'); } catch (e) {}
+    var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    apply(saved || (sysDark ? 'dark' : 'light'));
+    document.getElementById('themeBtn').addEventListener('click', function () {
+      apply(body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  })();
+</script>
+</body>
+</html>
