@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#131210" />
+<meta name="description" content="Anfrage an das Ball together Team senden – z.B. Account-Löschung, Datenauskunft oder Feedback." />
+<title>Anfrage senden — Ball together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --font: 'Outfit', system-ui, -apple-system, sans-serif;
+    --r-sm: 12px; --r-md: 16px; --r-lg: 24px; --r-pill: 999px;
+  }
+  [data-theme="light"] {
+    --bg: #f1efe9; --bg-2: #eae7df;
+    --surface: #ffffff; --surface-2: #faf8f4; --surface-3: #f0ede6;
+    --text: #1b1a16; --text-2: #56524b; --muted: #8c867b;
+    --border: rgba(20,18,14,0.10); --border-2: rgba(20,18,14,0.16);
+    --orange: #e7672a; --orange-press: #d25a20; --orange-soft: rgba(231,103,42,0.12); --on-orange: #fff;
+    --glass: rgba(255,255,255,0.7); --glass-border: rgba(255,255,255,0.8);
+    --shadow: 0 14px 40px rgba(20,18,14,0.10); --shadow-sm: 0 2px 8px rgba(20,18,14,0.06);
+    --ring: rgba(231,103,42,0.28);
+    --ok: #1f8a5b; --ok-soft: rgba(31,138,91,0.12);
+    --err: #d24b3e; --err-soft: rgba(210,75,62,0.12);
+  }
+  [data-theme="dark"] {
+    --bg: #131210; --bg-2: #100f0d;
+    --surface: #1d1b17; --surface-2: #25221d; --surface-3: #2e2a24;
+    --text: #f6f3ed; --text-2: #c4beb3; --muted: #8c867b;
+    --border: rgba(255,255,255,0.09); --border-2: rgba(255,255,255,0.16);
+    --orange: #f5824a; --orange-press: #e87238; --orange-soft: rgba(245,130,74,0.16); --on-orange: #1b1208;
+    --glass: rgba(29,27,23,0.72); --glass-border: rgba(255,255,255,0.09);
+    --shadow: 0 18px 50px rgba(0,0,0,0.55); --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+    --ring: rgba(245,130,74,0.32);
+    --ok: #43b783; --ok-soft: rgba(67,183,131,0.16);
+    --err: #e8695b; --err-soft: rgba(232,105,91,0.16);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; font-family: var(--font); color: var(--text);
+    background:
+      radial-gradient(120% 55% at 50% -5%, var(--orange-soft), transparent 45%),
+      linear-gradient(180deg, var(--bg), var(--bg-2));
+    background-attachment: fixed; min-height: 100vh; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--orange); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 10; background: var(--glass);
+    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner { max-width: 640px; margin: 0 auto; padding: 13px 22px; display: flex; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 17px; letter-spacing: -0.3px; white-space: nowrap; }
+  .ball { width: 30px; height: 30px; flex-shrink: 0; }
+  .theme-btn {
+    margin-left: auto; width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .12s;
+  }
+  .theme-btn:active { transform: scale(0.92); }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 22px 80px; }
+  header.hero { padding: 40px 0 22px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 13px;
+    border-radius: var(--r-pill); background: var(--orange-soft); color: var(--orange);
+    font-size: 12.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+  }
+  h1 { font-size: clamp(30px, 6.5vw, 42px); font-weight: 800; letter-spacing: -1.1px; margin: 16px 0 10px; line-height: 1.06; }
+  .lead { color: var(--text-2); font-size: 16px; margin: 0; max-width: 52ch; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+    box-shadow: var(--shadow); padding: 24px; margin-top: 26px;
+  }
+
+  label.field { display: block; margin-bottom: 18px; }
+  label.field:last-of-type { margin-bottom: 0; }
+  .lbl { font-size: 13.5px; font-weight: 700; color: var(--text-2); margin: 0 0 8px 2px; display: block; }
+  .req { color: var(--orange); }
+
+  input, textarea, select {
+    width: 100%; font-family: inherit; font-size: 16px; color: var(--text);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+    padding: 0 15px; height: 52px; outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  textarea { height: auto; min-height: 130px; padding: 13px 15px; resize: vertical; line-height: 1.5; }
+  select { appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238c867b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 9 12 15.5 18.5 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 44px;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--orange); box-shadow: 0 0 0 4px var(--ring); }
+  .hint { font-size: 12.5px; color: var(--muted); margin: 7px 0 0 2px; }
+  .char { font-size: 12px; color: var(--muted); text-align: right; margin: 7px 2px 0 0; font-variant-numeric: tabular-nums; }
+
+  /* request-type chips */
+  .kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .kind {
+    display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+    font-size: 14px; font-weight: 600; color: var(--text-2); transition: all .14s; user-select: none;
+  }
+  .kind .ic { width: 34px; height: 34px; border-radius: 10px; background: var(--surface-3); color: var(--text-2);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .14s; }
+  .kind.on { background: var(--orange-soft); border-color: var(--orange); color: var(--text); }
+  .kind.on .ic { background: var(--orange); color: var(--on-orange); }
+  .kind input { display: none; }
+  @media (max-width: 480px) { .kinds { grid-template-columns: 1fr; } }
+
+  /* account-deletion notice */
+  .notice {
+    display: none; gap: 11px; margin-top: 16px; padding: 14px 16px; border-radius: var(--r-md);
+    background: var(--err-soft); color: var(--text); font-size: 13.5px; line-height: 1.5; align-items: flex-start;
+  }
+  .notice.show { display: flex; }
+  .notice svg { flex-shrink: 0; color: var(--err); margin-top: 1px; }
+  .notice strong { color: var(--err); }
+
+  .btn {
+    width: 100%; height: 56px; border: none; border-radius: var(--r-pill); cursor: pointer;
+    font-family: inherit; font-size: 16.5px; font-weight: 700; color: var(--on-orange); background: var(--orange);
+    display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 24px;
+    box-shadow: 0 10px 26px var(--ring); transition: transform .12s, background .15s, opacity .15s;
+  }
+  .btn:active { transform: scale(0.985); background: var(--orange-press); }
+  .btn:disabled { opacity: .55; cursor: default; box-shadow: none; }
+  .btn .spin { width: 19px; height: 19px; border: 2.5px solid rgba(255,255,255,.4); border-top-color: var(--on-orange);
+    border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .alt { text-align: center; font-size: 13.5px; color: var(--muted); margin-top: 16px; }
+
+  /* success */
+  .done { display: none; text-align: center; padding: 14px 6px 6px; }
+  .done.show { display: block; animation: pop .4s cubic-bezier(.2,.8,.2,1); }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .done .badge { width: 76px; height: 76px; border-radius: 50%; background: var(--ok-soft); color: var(--ok);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+  .done h2 { font-size: 24px; font-weight: 800; letter-spacing: -.5px; margin: 0 0 8px; }
+  .done p { color: var(--text-2); margin: 0 auto; max-width: 38ch; }
+  .ref { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--muted);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 7px 15px;
+    font-variant-numeric: tabular-nums; }
+  .again { margin-top: 22px; background: none; border: none; color: var(--orange); font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; }
+
+  .formerr { display: none; gap: 9px; align-items: center; margin-top: 16px; padding: 12px 15px; border-radius: var(--r-md);
+    background: var(--err-soft); color: var(--err); font-size: 13.5px; font-weight: 600; }
+  .formerr.show { display: flex; }
+
+  footer { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 34px;
+    color: var(--muted); font-size: 13px; text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body data-theme="dark">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <svg class="ball" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="var(--orange)"/><g fill="none" stroke="var(--on-orange)" stroke-width="2.1" opacity="0.92"><path d="M3 24h42"/><path d="M24 3v42"/><path d="M9 9c7 6 7 24 0 30"/><path d="M39 9c-7 6-7 24 0 30"/></g></svg>
+        Ball together
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="Darstellung wechseln">
+        <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <header class="hero">
+      <span class="eyebrow">Support</span>
+      <h1>Anfrage ans Team</h1>
+      <p class="lead">Du möchtest dein Konto löschen, deine Daten einsehen, einen Fehler melden oder uns einfach Feedback geben? Schreib uns – wir melden uns so schnell wie möglich.</p>
+    </header>
+
+    <div class="card">
+      <!-- FORM -->
+      <form id="form" novalidate>
+        <label class="field">
+          <span class="lbl">Worum geht's? <span class="req">*</span></span>
+          <div class="kinds" id="kinds">
+            <!-- filled by JS -->
+          </div>
+        </label>
+
+        <div class="notice" id="delNotice">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.8 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/></svg>
+          <div><strong>Konto-Löschung:</strong> Wir löschen dein Konto und die zugehörigen personenbezogenen Daten (Profil, Anmeldungen, Chat-Nachrichten). Bitte sende die Anfrage von der <strong>E-Mail-Adresse deines Kontos</strong>, damit wir dich zuordnen können. Die Löschung erfolgt innerhalb von <strong>30 Tagen</strong>.</div>
+        </div>
+
+        <label class="field" style="margin-top:18px">
+          <span class="lbl">Dein Name</span>
+          <input type="text" id="name" name="name" placeholder="Wie dürfen wir dich nennen?" autocomplete="name" />
+        </label>
+
+        <label class="field">
+          <span class="lbl">E-Mail-Adresse <span class="req">*</span></span>
+          <input type="email" id="email" name="email" placeholder="deine@email.de" autocomplete="email" required />
+          <div class="hint">An diese Adresse antworten wir. Bei Konto-Löschung: die E-Mail deines Accounts.</div>
+        </label>
+
+        <label class="field">
+          <span class="lbl">Deine Nachricht <span class="req">*</span></span>
+          <textarea id="message" name="message" placeholder="Beschreib dein Anliegen…" required maxlength="2000"></textarea>
+          <div class="char"><span id="charCount">0</span> / 2000</div>
+        </label>
+
+        <div class="formerr" id="formErr">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span id="formErrMsg">Bitte fülle die Pflichtfelder aus.</span>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">
+          <span class="btn-label">Anfrage senden</span>
+        </button>
+        <div class="alt">oder per E-Mail an <a id="mailtoLink" href="#">das Team</a></div>
+      </form>
+
+      <!-- SUCCESS -->
+      <div class="done" id="done">
+        <div class="badge">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6.5 9.5 17 4.5 12"/></svg>
+        </div>
+        <h2>Anfrage gesendet!</h2>
+        <p id="doneMsg">Danke! Wir haben deine Anfrage erhalten und melden uns zeitnah bei dir.</p>
+        <div class="ref" id="refBox" style="display:none">Referenz: <strong id="refId"></strong></div>
+        <div><button class="again" id="againBtn">Weitere Anfrage senden</button></div>
+      </div>
+    </div>
+
+    <footer>
+      Antwortzeit in der Regel innerhalb von 2–3 Werktagen.<br>
+      Mehr dazu in unserer <a href="Datenschutz.html">Datenschutzerklärung</a>.<br>
+      © 2026 Ball together
+    </footer>
+  </div>
+
+<script>
+  /* ---- config: deine Support-Adresse hier eintragen ---- */
+  var SUPPORT_EMAIL = "support@balltogether.de"; // TODO: durch deine echte Adresse ersetzen
+
+  var SUPABASE = {
+    url:     "https://rlibxnnucrnrtahheehp.supabase.co",
+    anonKey: "sb_publishable_PF-_xP1SHwSZgpfNYyOn6A_sOb5Cwwi"
+  };
+
+  /* ---- theme ---- */
+  (function () {
+    var SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4 12H1.5M22.5 12H20M5.2 5.2 6.9 6.9M17.1 17.1l1.7 1.7M18.8 5.2 17.1 6.9M6.9 17.1 5.2 18.8"/>';
+    var MOON = '<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3.2a6.6 6.6 0 0 0 9.8 9.6Z"/>';
+    var body = document.body, icon = document.getElementById('themeIcon');
+    function apply(t) {
+      body.setAttribute('data-theme', t);
+      icon.innerHTML = t === 'dark' ? SUN : MOON;
+      document.querySelector('meta[name=theme-color]').setAttribute('content', t === 'dark' ? '#131210' : '#f1efe9');
+      try { localStorage.setItem('bt_legal_theme', t); } catch (e) {}
+    }
+    var saved = null; try { saved = localStorage.getItem('bt_legal_theme'); } catch (e) {}
+    var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    apply(saved || (sysDark ? 'dark' : 'light'));
+    document.getElementById('themeBtn').addEventListener('click', function () {
+      apply(body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  })();
+
+  /* ---- request kinds ---- */
+  var KINDS = [
+    { v: 'account_deletion', label: 'Konto löschen', ic: '<path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v6M14 11v6"/>' },
+    { v: 'data_export', label: 'Datenauskunft', ic: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/>' },
+    { v: 'data_correction', label: 'Daten korrigieren', ic: '<path d="M4 20h4L18.5 9.5a2 2 0 0 0-2.8-2.8L5 17.2V20Z"/><path d="M14 8 17 11"/>' },
+    { v: 'bug', label: 'Fehler melden', ic: '<rect x="8" y="6" width="8" height="14" rx="4"/><path d="M8 10 4 8M16 10l4-2M8 14H3M21 14h-5M8 18l-4 2M16 18l4 2M12 3v3"/>' },
+    { v: 'feedback', label: 'Feedback', ic: '<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L4 21l1.1-3.5A8.4 8.4 0 1 1 21 11.5Z"/>' },
+    { v: 'other', label: 'Sonstiges', ic: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7M12 17h.01"/>' }
+  ];
+  var selectedKind = 'account_deletion';
+
+  var kindsEl = document.getElementById('kinds');
+  KINDS.forEach(function (k, i) {
+    var l = document.createElement('label');
+    l.className = 'kind' + (k.v === selectedKind ? ' on' : '');
+    l.dataset.v = k.v;
+    l.innerHTML =
+      '<span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + k.ic + '</svg></span>' +
+      '<span>' + k.label + '</span>' +
+      '<input type="radio" name="kind" value="' + k.v + '"' + (k.v === selectedKind ? ' checked' : '') + ' />';
+    l.addEventListener('click', function () {
+      selectedKind = k.v;
+      [].forEach.call(kindsEl.children, function (c) { c.classList.toggle('on', c.dataset.v === k.v); });
+      l.querySelector('input').checked = true;
+      document.getElementById('delNotice').classList.toggle('show', k.v === 'account_deletion');
+      updateMailto();
+    });
+    kindsEl.appendChild(l);
+  });
+  document.getElementById('delNotice').classList.toggle('show', selectedKind === 'account_deletion');
+
+  /* ---- char counter ---- */
+  var msgEl = document.getElementById('message');
+  msgEl.addEventListener('input', function () {
+    document.getElementById('charCount').textContent = msgEl.value.length;
+    updateMailto();
+  });
+  document.getElementById('email').addEventListener('input', updateMailto);
+  document.getElementById('name').addEventListener('input', updateMailto);
+
+  /* ---- mailto fallback ---- */
+  function kindLabel(v) { for (var i = 0; i < KINDS.length; i++) if (KINDS[i].v === v) return KINDS[i].label; return v; }
+  function updateMailto() {
+    var subj = '[Ball together] ' + kindLabel(selectedKind);
+    var body = 'Anliegen: ' + kindLabel(selectedKind) +
+      '\nName: ' + (document.getElementById('name').value || '-') +
+      '\nE-Mail: ' + (document.getElementById('email').value || '-') +
+      '\n\n' + (msgEl.value || '');
+    document.getElementById('mailtoLink').href =
+      'mailto:' + SUPPORT_EMAIL + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+  }
+  updateMailto();
+
+  /* ---- supabase client (optional) ---- */
+  var sb = null;
+  try {
+    if (window.supabase && SUPABASE.url.indexOf('http') === 0) {
+      sb = window.supabase.createClient(SUPABASE.url, SUPABASE.anonKey, { auth: { persistSession: false } });
+    }
+  } catch (e) { sb = null; }
+
+  /* ---- validation + submit ---- */
+  var form = document.getElementById('form');
+  var btn = document.getElementById('submitBtn');
+  var formErr = document.getElementById('formErr');
+  var formErrMsg = document.getElementById('formErrMsg');
+
+  function showErr(msg) { formErrMsg.textContent = msg; formErr.classList.add('show'); }
+  function hideErr() { formErr.classList.remove('show'); }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    hideErr();
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var message = msgEl.value.trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('Bitte gib eine gültige E-Mail-Adresse an.'); return; }
+    if (message.length < 5) { showErr('Bitte beschreibe dein Anliegen etwas genauer.'); return; }
+
+    setBusy(true);
+
+    var refId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('' + Date.now() + Math.random().toString(16).slice(2));
+    var payload = { id: refId, kind: selectedKind, name: name || null, email: email, message: message };
+
+    if (sb) {
+      sb.from('requests').insert(payload)
+        .then(function (res) {
+          if (res.error) throw res.error;
+          succeed(refId);
+        })
+        .catch(function (err) {
+          console.warn('Supabase insert failed, falling back to mailto:', err);
+          setBusy(false);
+          // graceful fallback: open mail client
+          updateMailto();
+          window.location.href = document.getElementById('mailtoLink').href;
+          showErr('Online-Versand nicht möglich – wir haben dein E-Mail-Programm geöffnet. Bitte sende die Nachricht ab.');
+        });
+    } else {
+      // no backend configured → mailto
+      setBusy(false);
+      updateMailto();
+      window.location.href = document.getElementById('mailtoLink').href;
+    }
+  });
+
+  function setBusy(on) {
+    btn.disabled = on;
+    btn.innerHTML = on ? '<span class="spin"></span> Senden…' : '<span class="btn-label">Anfrage senden</span>';
+  }
+
+  function succeed(id) {
+    form.style.display = 'none';
+    var done = document.getElementById('done');
+    done.classList.add('show');
+    if (selectedKind === 'account_deletion') {
+      document.getElementById('doneMsg').textContent =
+        'Danke! Wir haben deine Löschanfrage erhalten und bearbeiten sie innerhalb von 30 Tagen. Du bekommst eine Bestätigung per E-Mail.';
+    }
+    if (id) {
+      document.getElementById('refBox').style.display = 'inline-block';
+      document.getElementById('refId').textContent = String(id).slice(0, 8).toUpperCase();
+    }
+  }
+
+  document.getElementById('againBtn').addEventListener('click', function () {
+    document.getElementById('done').classList.remove('show');
+    form.reset();
+    form.style.display = 'block';
+    selectedKind = 'account_deletion';
+    [].forEach.call(kindsEl.children, function (c) { c.classList.toggle('on', c.dataset.v === 'account_deletion'); });
+    document.getElementById('delNotice').classList.add('show');
+    document.getElementById('charCount').textContent = '0';
+    setBusy(false);
+    updateMailto();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
