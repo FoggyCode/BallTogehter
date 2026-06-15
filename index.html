@@ -106,13 +106,19 @@
     padding: 72px 0 56px;
     display: flex; flex-direction: column; align-items: center; text-align: center;
   }
-  .app-icon {
+  .app-icon-img {
     width: 110px; height: 110px; border-radius: 28px;
-    background: var(--orange); display: flex; align-items: center; justify-content: center;
     box-shadow: var(--shadow-lg), 0 0 0 1px var(--border-2);
-    margin-bottom: 28px; flex-shrink: 0;
+    margin-bottom: 28px; flex-shrink: 0; display: block;
+    object-fit: cover;
   }
-  .app-icon svg { width: 64px; height: 64px; }
+  .hero-preview {
+    width: 100%; max-width: 780px;
+    margin-top: 52px; border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg), 0 0 0 1px var(--border);
+    display: block; object-fit: cover;
+    overflow: hidden;
+  }
   .eyebrow {
     display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 13px;
     border-radius: var(--r-pill); background: var(--orange-soft); color: var(--orange);
@@ -251,15 +257,7 @@
 
     <!-- Hero -->
     <section class="hero">
-      <div class="app-icon">
-        <svg viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="20" fill="var(--on-orange)" opacity="0.18"/>
-          <g fill="none" stroke="var(--on-orange)" stroke-width="2.4" opacity="0.95">
-            <path d="M4 24h40"/><path d="M24 4v40"/>
-            <path d="M10 10c8 5 8 24 0 30"/><path d="M38 10c-8 5-8 24 0 30"/>
-          </g>
-        </svg>
-      </div>
+      <img src="icon.png" alt="Ball together App Icon" class="app-icon-img" />
       <div class="eyebrow">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
         Kostenlos · iOS &amp; Android
@@ -268,22 +266,28 @@
       <p class="hero-sub">Finde Mitspieler, organisiere spontane Spiele und entdecke Events für deine Lieblingssportart — egal ob Fußball, Basketball oder Volleyball.</p>
       <div class="dl-row" id="download">
         <a class="dl-btn" href="https://apps.apple.com/app/ball-together/id0000000000" target="_blank" rel="noopener">
-          <!-- Apple logo -->
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M15.24 0c.08 1.42-.39 2.83-1.22 3.84-.82 1-2.16 1.77-3.46 1.67-.1-1.36.47-2.77 1.27-3.73C12.64.77 14.01.05 15.24 0zM19.5 14.98c-.63 1.87-1.44 3.7-2.6 5.28-.76 1.08-1.57 2.17-2.83 2.19-1.23.02-1.64-.77-3.05-.76-1.43.01-1.87.79-3.06.78-1.22-.01-2.07-1.14-2.84-2.22C3.22 17.97 1.88 14.47 1.87 11.1c-.01-3.28 1.71-5.01 3.4-5.03 1.24-.02 2.02.81 3.06.81 1.01 0 1.62-.82 3.08-.8 1.31.02 2.46.73 3.05 1.83-1.2.7-2.24 2.01-2.22 3.78.02 2.01 1.16 3.4 2.64 3.96.28.1.56.17.85.19.37-.98.7-1.98.77-2.86z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
           <span>
             <span class="dl-btn-sub">Laden im</span>
             <span class="dl-btn-main">App Store</span>
           </span>
         </a>
-        <a class="dl-btn" href="https://play.google.com/store/apps/details?id=com.balltogether.app" target="_blank" rel="noopener">
-          <!-- Play Store triangle -->
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M3.18 1.02A1.5 1.5 0 001 2.35v17.3a1.5 1.5 0 002.18 1.33l15-8.65a1.5 1.5 0 000-2.66l-15-8.65z"/></svg>
+        <a class="dl-btn" href="https://play.google.com/store/apps/details?id=com.foggystudio.balltogether" target="_blank" rel="noopener">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#34A853" d="M3.18 23.76A2 2 0 004 24l10.35-5.97-2.9-2.9z"/>
+            <path fill="#EA4335" d="M20.82 10.73l-2.9-1.68-3.37 3.37 3.37 3.37 2.93-1.7a2 2 0 000-3.36z"/>
+            <path fill="#4285F4" d="M4 0a2 2 0 00-1 1.77v20.46A2 2 0 004 24l11.47-11.47z"/>
+            <path fill="#FBBC05" d="M15.47 12.53L4 .06A2 2 0 003.18.24L14.65 11.7z"/>
+          </svg>
           <span>
             <span class="dl-btn-sub">Jetzt bei</span>
             <span class="dl-btn-main">Google Play</span>
           </span>
         </a>
       </div>
+      <img src="preview.png" alt="Ball together App Vorschau" class="hero-preview" />
     </section>
 
     <!-- Features -->
@@ -354,14 +358,21 @@
       <p>Kostenlos herunterladen — verfügbar für iPhone und Android.</p>
       <div class="dl-row">
         <a class="dl-btn" href="https://apps.apple.com/app/ball-together/id0000000000" target="_blank" rel="noopener">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M15.24 0c.08 1.42-.39 2.83-1.22 3.84-.82 1-2.16 1.77-3.46 1.67-.1-1.36.47-2.77 1.27-3.73C12.64.77 14.01.05 15.24 0zM19.5 14.98c-.63 1.87-1.44 3.7-2.6 5.28-.76 1.08-1.57 2.17-2.83 2.19-1.23.02-1.64-.77-3.05-.76-1.43.01-1.87.79-3.06.78-1.22-.01-2.07-1.14-2.84-2.22C3.22 17.97 1.88 14.47 1.87 11.1c-.01-3.28 1.71-5.01 3.4-5.03 1.24-.02 2.02.81 3.06.81 1.01 0 1.62-.82 3.08-.8 1.31.02 2.46.73 3.05 1.83-1.2.7-2.24 2.01-2.22 3.78.02 2.01 1.16 3.4 2.64 3.96.28.1.56.17.85.19.37-.98.7-1.98.77-2.86z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
           <span>
             <span class="dl-btn-sub">Laden im</span>
             <span class="dl-btn-main">App Store</span>
           </span>
         </a>
-        <a class="dl-btn" href="https://play.google.com/store/apps/details?id=com.balltogether.app" target="_blank" rel="noopener">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M3.18 1.02A1.5 1.5 0 001 2.35v17.3a1.5 1.5 0 002.18 1.33l15-8.65a1.5 1.5 0 000-2.66l-15-8.65z"/></svg>
+        <a class="dl-btn" href="https://play.google.com/store/apps/details?id=com.foggystudio.balltogether" target="_blank" rel="noopener">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#34A853" d="M3.18 23.76A2 2 0 004 24l10.35-5.97-2.9-2.9z"/>
+            <path fill="#EA4335" d="M20.82 10.73l-2.9-1.68-3.37 3.37 3.37 3.37 2.93-1.7a2 2 0 000-3.36z"/>
+            <path fill="#4285F4" d="M4 0a2 2 0 00-1 1.77v20.46A2 2 0 004 24l11.47-11.47z"/>
+            <path fill="#FBBC05" d="M15.47 12.53L4 .06A2 2 0 003.18.24L14.65 11.7z"/>
+          </svg>
           <span>
             <span class="dl-btn-sub">Jetzt bei</span>
             <span class="dl-btn-main">Google Play</span>
