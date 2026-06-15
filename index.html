@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#131210" />
+<meta name="description" content="Ball together — Finde Mitspieler in deiner Nähe und organisiere Spiele für jede Sportart." />
+<meta property="og:title" content="Ball together" />
+<meta property="og:description" content="Finde Mitspieler in deiner Nähe und organisiere Spiele für jede Sportart." />
+<meta property="og:type" content="website" />
+<title>Ball together — Finde Mitspieler in deiner Nähe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --font: 'Outfit', system-ui, -apple-system, sans-serif;
+    --r-md: 18px; --r-lg: 24px; --r-xl: 32px; --r-pill: 999px;
+  }
+  [data-theme="light"] {
+    --bg: #f1efe9; --bg-2: #eae7df;
+    --surface: #ffffff; --surface-2: #faf8f4; --surface-3: #f0ede6;
+    --text: #1b1a16; --text-2: #56524b; --muted: #8c867b;
+    --border: rgba(20,18,14,0.10); --border-2: rgba(20,18,14,0.14);
+    --orange: #e7672a; --orange-soft: rgba(231,103,42,0.12); --on-orange: #fff;
+    --glass: rgba(255,255,255,0.7); --glass-border: rgba(255,255,255,0.8);
+    --shadow: 0 14px 40px rgba(20,18,14,0.10);
+    --shadow-lg: 0 24px 60px rgba(20,18,14,0.14);
+  }
+  [data-theme="dark"] {
+    --bg: #131210; --bg-2: #100f0d;
+    --surface: #1d1b17; --surface-2: #25221d; --surface-3: #2e2a24;
+    --text: #f6f3ed; --text-2: #c4beb3; --muted: #8c867b;
+    --border: rgba(255,255,255,0.09); --border-2: rgba(255,255,255,0.14);
+    --orange: #f5824a; --orange-soft: rgba(245,130,74,0.16); --on-orange: #1b1208;
+    --glass: rgba(29,27,23,0.72); --glass-border: rgba(255,255,255,0.09);
+    --shadow: 0 18px 50px rgba(0,0,0,0.55);
+    --shadow-lg: 0 28px 70px rgba(0,0,0,0.65);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font); color: var(--text);
+    background:
+      radial-gradient(130% 55% at 50% -8%, var(--orange-soft), transparent 50%),
+      linear-gradient(180deg, var(--bg), var(--bg-2));
+    background-attachment: fixed;
+    min-height: 100vh; line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--orange); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Topbar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 900px; margin: 0 auto; padding: 13px 22px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 17px; letter-spacing: -0.3px; }
+  .ball-icon { width: 30px; height: 30px; flex-shrink: 0; }
+  .theme-btn {
+    margin-left: auto; width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: transform .12s, background .15s;
+  }
+  .theme-btn:active { transform: scale(0.92); }
+
+  /* ── Deep-link banner ── */
+  #redirect-banner {
+    display: none;
+    background: var(--orange); color: var(--on-orange);
+    text-align: center; padding: 14px 22px; font-size: 14.5px; font-weight: 600;
+  }
+  #redirect-banner.visible { display: block; }
+  #redirect-banner a { color: var(--on-orange); text-decoration: underline; }
+
+  /* ── Download-highlight (shows when app not installed) ── */
+  #app-not-found {
+    display: none;
+    max-width: 900px; margin: 0 auto; padding: 0 22px;
+  }
+  #app-not-found.visible { display: block; }
+  .not-found-card {
+    margin-top: 28px;
+    background: var(--orange-soft); border: 1.5px solid var(--orange);
+    border-radius: var(--r-lg); padding: 20px 24px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .not-found-card svg { flex-shrink: 0; color: var(--orange); }
+  .not-found-card p { color: var(--text-2); font-size: 14.5px; flex: 1 1 220px; }
+  .not-found-card p strong { color: var(--text); }
+
+  /* ── Layout ── */
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 22px 100px; }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 72px 0 56px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .app-icon {
+    width: 110px; height: 110px; border-radius: 28px;
+    background: var(--orange); display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-lg), 0 0 0 1px var(--border-2);
+    margin-bottom: 28px; flex-shrink: 0;
+  }
+  .app-icon svg { width: 64px; height: 64px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 13px;
+    border-radius: var(--r-pill); background: var(--orange-soft); color: var(--orange);
+    font-size: 12.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 8vw, 60px); font-weight: 900; letter-spacing: -2px;
+    line-height: 1.02; color: var(--text); margin-bottom: 18px;
+  }
+  .hero h1 span { color: var(--orange); }
+  .hero-sub {
+    font-size: clamp(16px, 2.5vw, 19px); color: var(--text-2); font-weight: 400;
+    max-width: 520px; line-height: 1.6; margin-bottom: 36px;
+  }
+
+  /* ── Download buttons ── */
+  .dl-row {
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+  }
+  .dl-btn {
+    display: flex; align-items: center; gap: 11px;
+    background: var(--text); color: var(--bg);
+    border-radius: var(--r-md); padding: 12px 22px;
+    font-weight: 700; font-size: 15px; letter-spacing: -0.2px;
+    box-shadow: var(--shadow); border: 1px solid var(--border-2);
+    transition: transform .14s, box-shadow .14s, opacity .14s;
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+  .dl-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); opacity: 0.93; }
+  .dl-btn:active { transform: scale(0.97); }
+  .dl-btn svg { flex-shrink: 0; }
+  .dl-btn-sub { font-size: 11px; font-weight: 500; opacity: 0.65; display: block; line-height: 1; margin-bottom: 2px; }
+  .dl-btn-main { display: block; line-height: 1.2; }
+
+  /* ── Feature grid ── */
+  .section-label {
+    font-size: 12.5px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 14px; text-align: center;
+  }
+  .section-title {
+    font-size: clamp(26px, 4vw, 36px); font-weight: 800; letter-spacing: -1px;
+    color: var(--text); text-align: center; margin-bottom: 10px;
+  }
+  .section-sub {
+    color: var(--text-2); text-align: center; font-size: 16px;
+    max-width: 500px; margin: 0 auto 46px;
+  }
+  .features {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;
+    margin-bottom: 70px;
+  }
+  .feat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+    padding: 26px 24px; box-shadow: var(--shadow);
+    transition: transform .16s, box-shadow .16s;
+  }
+  .feat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .feat-icon {
+    width: 46px; height: 46px; border-radius: 14px;
+    background: var(--orange-soft); color: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .feat-card h3 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 7px; }
+  .feat-card p { font-size: 14.5px; color: var(--text-2); line-height: 1.58; }
+
+  /* ── CTA section ── */
+  .cta-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl);
+    padding: 52px 32px; text-align: center; box-shadow: var(--shadow-lg);
+    position: relative; overflow: hidden;
+  }
+  .cta-box::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(80% 60% at 50% -10%, var(--orange-soft), transparent 60%);
+    pointer-events: none;
+  }
+  .cta-box h2 { font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -0.8px; margin-bottom: 12px; }
+  .cta-box p { color: var(--text-2); font-size: 16px; margin-bottom: 30px; max-width: 420px; margin-left: auto; margin-right: auto; }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border); padding-top: 26px; margin-top: 8px;
+    color: var(--muted); font-size: 13.5px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .footer-links a { color: var(--muted); font-size: 13.5px; }
+  .footer-links a:hover { color: var(--orange); }
+
+  @media (max-width: 520px) {
+    .hero { padding: 52px 0 44px; }
+    .app-icon { width: 90px; height: 90px; border-radius: 22px; }
+    .app-icon svg { width: 52px; height: 52px; }
+    .dl-btn { padding: 11px 18px; font-size: 14px; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+  <!-- Deep-link redirect banner -->
+  <div id="redirect-banner">
+    Ball together wird geöffnet … <span id="redirect-fallback" style="display:none;">
+      App nicht installiert? Jetzt herunterladen:
+      <a href="#download">zum Download</a>
+    </span>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <svg class="ball-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="var(--orange)"/><g fill="none" stroke="var(--on-orange)" stroke-width="2.1" opacity="0.92"><path d="M3 24h42"/><path d="M24 3v42"/><path d="M9 9c7 6 7 24 0 30"/><path d="M39 9c-7 6-7 24 0 30"/></g></svg>
+        Ball together
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="Darstellung wechseln">
+        <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- App not found hint (shown after failed redirect) -->
+  <div id="app-not-found">
+    <div class="not-found-card">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <p><strong>App nicht gefunden.</strong> Es sieht aus, als wäre Ball together noch nicht auf diesem Gerät installiert. Lade die App unten herunter und öffne den Link erneut.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="app-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="20" fill="var(--on-orange)" opacity="0.18"/>
+          <g fill="none" stroke="var(--on-orange)" stroke-width="2.4" opacity="0.95">
+            <path d="M4 24h40"/><path d="M24 4v40"/>
+            <path d="M10 10c8 5 8 24 0 30"/><path d="M38 10c-8 5-8 24 0 30"/>
+          </g>
+        </svg>
+      </div>
+      <div class="eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Kostenlos · iOS &amp; Android
+      </div>
+      <h1>Sport. <span>Gemeinsam.</span><br>In deiner Nähe.</h1>
+      <p class="hero-sub">Finde Mitspieler, organisiere spontane Spiele und entdecke Events für deine Lieblingssportart — egal ob Fußball, Basketball oder Volleyball.</p>
+      <div class="dl-row" id="download">
+        <a class="dl-btn" href="https://apps.apple.com/app/ball-together/id0000000000" target="_blank" rel="noopener">
+          <!-- Apple logo -->
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M15.24 0c.08 1.42-.39 2.83-1.22 3.84-.82 1-2.16 1.77-3.46 1.67-.1-1.36.47-2.77 1.27-3.73C12.64.77 14.01.05 15.24 0zM19.5 14.98c-.63 1.87-1.44 3.7-2.6 5.28-.76 1.08-1.57 2.17-2.83 2.19-1.23.02-1.64-.77-3.05-.76-1.43.01-1.87.79-3.06.78-1.22-.01-2.07-1.14-2.84-2.22C3.22 17.97 1.88 14.47 1.87 11.1c-.01-3.28 1.71-5.01 3.4-5.03 1.24-.02 2.02.81 3.06.81 1.01 0 1.62-.82 3.08-.8 1.31.02 2.46.73 3.05 1.83-1.2.7-2.24 2.01-2.22 3.78.02 2.01 1.16 3.4 2.64 3.96.28.1.56.17.85.19.37-.98.7-1.98.77-2.86z"/></svg>
+          <span>
+            <span class="dl-btn-sub">Laden im</span>
+            <span class="dl-btn-main">App Store</span>
+          </span>
+        </a>
+        <a class="dl-btn" href="https://play.google.com/store/apps/details?id=com.balltogether.app" target="_blank" rel="noopener">
+          <!-- Play Store triangle -->
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M3.18 1.02A1.5 1.5 0 001 2.35v17.3a1.5 1.5 0 002.18 1.33l15-8.65a1.5 1.5 0 000-2.66l-15-8.65z"/></svg>
+          <span>
+            <span class="dl-btn-sub">Jetzt bei</span>
+            <span class="dl-btn-main">Google Play</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <div class="section-label">Was dich erwartet</div>
+    <h2 class="section-title">Alles rund um deinen Sport</h2>
+    <p class="section-sub">Ball together verbindet Sportbegeisterte in deiner Umgebung — schnell, einfach, ohne Aufwand.</p>
+
+    <div class="features">
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <h3>Spontane Spiele</h3>
+        <p>Erstelle in Sekunden ein Spiel und lade Leute in deiner Nähe ein. Kein Hin-und-Her mehr.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <h3>Mitspieler finden</h3>
+        <p>Sieh auf einen Blick, wer in deiner Nähe spielt. Tritt bestehenden Gruppen bei oder bilde deine eigene.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <h3>Lokale Events</h3>
+        <p>Entdecke Turniere, Trainings und Pickup-Games in deiner Stadt — nach Sportart gefiltert.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.09 10.8a19.79 19.79 0 01-3.07-8.7A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
+          </svg>
+        </div>
+        <h3>Einfache Kommunikation</h3>
+        <p>Chatte direkt mit Mitspielern, stimme Zeiten ab und behalte alles in einer App.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <h3>Bewertungen</h3>
+        <p>Bewerte Mitspieler und Veranstaltungen — für eine verlässliche Community von Anfang an.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <h3>Alle Sportarten</h3>
+        <p>Fußball, Basketball, Tennis, Volleyball — Ball together unterstützt alle gängigen Ballsportarten.</p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h2>Bereit? Hol dir die App.</h2>
+      <p>Kostenlos herunterladen — verfügbar für iPhone und Android.</p>
+      <div class="dl-row">
+        <a class="dl-btn" href="https://apps.apple.com/app/ball-together/id0000000000" target="_blank" rel="noopener">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M15.24 0c.08 1.42-.39 2.83-1.22 3.84-.82 1-2.16 1.77-3.46 1.67-.1-1.36.47-2.77 1.27-3.73C12.64.77 14.01.05 15.24 0zM19.5 14.98c-.63 1.87-1.44 3.7-2.6 5.28-.76 1.08-1.57 2.17-2.83 2.19-1.23.02-1.64-.77-3.05-.76-1.43.01-1.87.79-3.06.78-1.22-.01-2.07-1.14-2.84-2.22C3.22 17.97 1.88 14.47 1.87 11.1c-.01-3.28 1.71-5.01 3.4-5.03 1.24-.02 2.02.81 3.06.81 1.01 0 1.62-.82 3.08-.8 1.31.02 2.46.73 3.05 1.83-1.2.7-2.24 2.01-2.22 3.78.02 2.01 1.16 3.4 2.64 3.96.28.1.56.17.85.19.37-.98.7-1.98.77-2.86z"/></svg>
+          <span>
+            <span class="dl-btn-sub">Laden im</span>
+            <span class="dl-btn-main">App Store</span>
+          </span>
+        </a>
+        <a class="dl-btn" href="https://play.google.com/store/apps/details?id=com.balltogether.app" target="_blank" rel="noopener">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M3.18 1.02A1.5 1.5 0 001 2.35v17.3a1.5 1.5 0 002.18 1.33l15-8.65a1.5 1.5 0 000-2.66l-15-8.65z"/></svg>
+          <span>
+            <span class="dl-btn-sub">Jetzt bei</span>
+            <span class="dl-btn-main">Google Play</span>
+          </span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="margin-top: 56px;">
+      <div class="footer-links">
+        <a href="Impressum.html">Impressum</a>
+        <a href="Datenschutz.html">Datenschutz</a>
+        <a href="Request.html">Kontakt</a>
+      </div>
+      <span>© 2025 Ball together · Dan Bootz</span>
+    </footer>
+
+  </div><!-- /wrap -->
+
+<script>
+  /* ── Theme ── */
+  const moonPath = 'M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z';
+  const sunPath  = 'M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42';
+
+  function applyTheme(t) {
+    document.body.dataset.theme = t;
+    localStorage.setItem('bt-theme', t);
+    const icon = document.getElementById('themeIcon');
+    if (t === 'dark') {
+      icon.innerHTML = `<path d="${moonPath}" fill="currentColor" stroke="none"/>`;
+    } else {
+      icon.innerHTML = sunPath.split('M').filter(Boolean).map(d => `<path d="M${d}" stroke-linecap="round"/>`).join('');
+    }
+  }
+
+  const saved = localStorage.getItem('bt-theme') ||
+    (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  applyTheme(saved);
+
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ── Deep-link redirect ── */
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+    // Accept both ?redirect=balltogether://... and ?redirect="balltogether://..."
+    let target = params.get('redirect');
+    if (!target) return;
+
+    // Strip surrounding quotes if present
+    target = target.replace(/^["']|["']$/g, '');
+
+    if (!target.startsWith('balltogether://')) return;
+
+    const banner = document.getElementById('redirect-banner');
+    const notFound = document.getElementById('app-not-found');
+    const fallback = document.getElementById('redirect-fallback');
+
+    banner.classList.add('visible');
+
+    // Attempt to open the custom URL scheme
+    const startTime = Date.now();
+    window.location.href = target;
+
+    // After 2.2 s, check if we're still here (app was not installed / didn't open)
+    setTimeout(function () {
+      const elapsed = Date.now() - startTime;
+      // If page is still active and not much time passed in background, assume app missing
+      if (elapsed < 3500) {
+        fallback.style.display = 'inline';
+        notFound.classList.add('visible');
+        // Scroll to the not-found hint smoothly
+        notFound.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 2200);
+  })();
+</script>
+</body>
+</html>
