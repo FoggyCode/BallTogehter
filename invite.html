@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#131210" />
+<meta property="og:title" content="Du wurdest zu Ball together eingeladen!" />
+<meta property="og:description" content="Finde Mitspieler, organisiere spontane Spiele und entdecke Courts in deiner Nähe." />
+<meta property="og:image" content="https://balltogether.app/preview.png" />
+<title>Einladung – Ball together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root { --font: 'Outfit', system-ui, -apple-system, sans-serif; --r-md: 18px; --r-lg: 24px; --r-xl: 32px; --r-pill: 999px; }
+  [data-theme="light"] {
+    --bg: #f1efe9; --bg-2: #eae7df;
+    --surface: #ffffff; --surface-2: #faf8f4; --surface-3: #f0ede6;
+    --text: #1b1a16; --text-2: #56524b; --muted: #8c867b;
+    --border: rgba(20,18,14,0.10); --border-2: rgba(20,18,14,0.14);
+    --orange: #e7672a; --orange-soft: rgba(231,103,42,0.12); --on-orange: #fff;
+    --shadow: 0 14px 40px rgba(20,18,14,0.10); --shadow-lg: 0 24px 60px rgba(20,18,14,0.14);
+  }
+  [data-theme="dark"] {
+    --bg: #131210; --bg-2: #100f0d;
+    --surface: #1d1b17; --surface-2: #25221d; --surface-3: #2e2a24;
+    --text: #f6f3ed; --text-2: #c4beb3; --muted: #8c867b;
+    --border: rgba(255,255,255,0.09); --border-2: rgba(255,255,255,0.14);
+    --orange: #f5824a; --orange-soft: rgba(245,130,74,0.16); --on-orange: #1b1208;
+    --shadow: 0 18px 50px rgba(0,0,0,0.55); --shadow-lg: 0 28px 70px rgba(0,0,0,0.65);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font); color: var(--text);
+    background: radial-gradient(130% 55% at 50% -8%, var(--orange-soft), transparent 50%),
+                linear-gradient(180deg, var(--bg), var(--bg-2));
+    background-attachment: fixed; min-height: 100vh; line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Topbar */
+  .topbar { position: sticky; top: 0; z-index: 10; background: rgba(19,18,16,0.72); backdrop-filter: blur(20px) saturate(160%); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] .topbar { background: rgba(255,255,255,0.72); }
+  .topbar-inner { max-width: 520px; margin: 0 auto; padding: 13px 22px; display: flex; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -0.3px; }
+  .ball-icon { width: 28px; height: 28px; flex-shrink: 0; }
+  .theme-btn { margin-left: auto; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+  /* Layout */
+  .wrap { max-width: 520px; margin: 0 auto; padding: 40px 22px 80px; }
+
+  /* Invite card */
+  .invite-card {
+    background: var(--surface); border: 1px solid var(--border-2);
+    border-radius: 28px; padding: 36px 28px; box-shadow: var(--shadow-lg);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .invite-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(70% 50% at 50% -5%, var(--orange-soft), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Avatar placeholder */
+  .invite-avatar {
+    width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 6px;
+    background: var(--orange-soft); border: 3px solid var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 900; color: var(--orange);
+    box-shadow: 0 0 0 6px rgba(245,130,74,0.1);
+  }
+  .invite-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .invite-sub { font-size: 14px; color: var(--text-2); margin-bottom: 28px; }
+
+  /* Code box */
+  .code-box {
+    background: var(--surface-2); border: 2px solid var(--orange);
+    border-radius: var(--r-lg); padding: 20px; margin-bottom: 14px;
+  }
+  .code-label { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .code-value {
+    font-size: 32px; font-weight: 900; letter-spacing: 6px; color: var(--orange);
+    font-family: 'Courier New', monospace; line-height: 1;
+    word-break: break-all;
+  }
+  .copy-btn {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    width: 100%; margin-top: 14px; height: 44px; border-radius: var(--r-md);
+    border: 1.5px solid var(--border-2); background: var(--surface-3);
+    color: var(--text-2); font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .copy-btn:hover, .copy-btn.copied { background: var(--orange-soft); color: var(--orange); border-color: var(--orange); }
+
+  /* Store buttons */
+  .store-row { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .dl-btn {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--text); color: var(--bg);
+    border-radius: var(--r-md); padding: 13px 20px;
+    font-weight: 700; font-size: 15px; border: 1px solid var(--border-2);
+    box-shadow: var(--shadow); transition: transform .14s, opacity .14s;
+    text-decoration: none !important; width: 100%;
+  }
+  .dl-btn:hover { transform: translateY(-1px); opacity: 0.93; }
+  .dl-btn:active { transform: scale(0.97); }
+  .dl-btn svg, .dl-btn img { flex-shrink: 0; width: 22px; height: 22px; object-fit: contain; }
+  .dl-btn-sub { font-size: 11px; font-weight: 500; opacity: 0.6; display: block; line-height: 1; margin-bottom: 2px; }
+  .dl-btn-main { display: block; line-height: 1.2; }
+
+  /* Already installed */
+  .open-btn {
+    display: block; margin-top: 18px; padding: 12px;
+    text-align: center; color: var(--orange); font-size: 14px; font-weight: 700;
+    border: 1.5px solid var(--orange); border-radius: var(--r-md);
+    background: var(--orange-soft); cursor: pointer;
+    text-decoration: none; transition: opacity .15s;
+  }
+  .open-btn:hover { opacity: 0.85; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+  .step { display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); }
+  .step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--orange); color: var(--on-orange); font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-text { font-size: 14px; color: var(--text-2); line-height: 1.5; }
+  .step-text strong { color: var(--text); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #22c55e; color: #fff; padding: 10px 22px; border-radius: var(--r-pill);
+    font-size: 14px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,.3);
+    transition: transform .28s cubic-bezier(0.34,1.3,0.64,1); pointer-events: none; white-space: nowrap;
+    z-index: 999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* No code state */
+  .no-code { text-align: center; padding: 48px 0; }
+  .no-code h2 { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+  .no-code p { color: var(--text-2); font-size: 15px; }
+
+  footer { text-align: center; margin-top: 48px; color: var(--muted); font-size: 13px; }
+  footer a { color: var(--muted); margin: 0 8px; }
+  footer a:hover { color: var(--orange); }
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <svg class="ball-icon" viewBox="0 0 48 48">
+        <circle cx="24" cy="24" r="21" fill="var(--orange)"/>
+        <g fill="none" stroke="var(--on-orange)" stroke-width="2.1" opacity="0.92">
+          <path d="M3 24h42"/><path d="M24 3v42"/>
+          <path d="M9 9c7 6 7 24 0 30"/><path d="M39 9c-7 6-7 24 0 30"/>
+        </g>
+      </svg>
+      Ball together
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="Darstellung wechseln">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></svg>
+    </button>
+  </div>
+</div>
+
+<div class="wrap" id="main">
+  <!-- filled by JS -->
+</div>
+
+<div class="toast" id="toast">Code kopiert!</div>
+
+<script>
+/* ── Theme ── */
+const moonPath = 'M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z';
+const sunPath  = 'M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42';
+function applyTheme(t) {
+  document.body.dataset.theme = t;
+  localStorage.setItem('bt-theme', t);
+  const icon = document.getElementById('themeIcon');
+  if (t === 'dark') icon.innerHTML = `<path d="${moonPath}" fill="currentColor" stroke="none"/>`;
+  else icon.innerHTML = sunPath.split('M').filter(Boolean).map(d => `<path d="M${d}" stroke-linecap="round"/>`).join('');
+}
+const saved = localStorage.getItem('bt-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+applyTheme(saved);
+document.getElementById('themeBtn').addEventListener('click', () => applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+/* ── Invite logic ── */
+const params  = new URLSearchParams(window.location.search);
+const code    = (params.get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+const pref    = params.get('pref') || 'request';
+const main    = document.getElementById('main');
+
+const PACKAGE  = 'com.foggystudio.balltogether';
+const PLAY_URL = `https://play.google.com/store/apps/details?id=${PACKAGE}`;
+const IOS_URL  = 'https://apps.apple.com/app/ball-together/id0000000000';
+
+// Play Store URL with referrer so future native plugin can read the code
+const playWithRef = code
+  ? `${PLAY_URL}&referrer=${encodeURIComponent(`bt_invite_code=${code}&bt_invite_pref=${pref}`)}`
+  : PLAY_URL;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function copyCode() {
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => {
+    document.querySelector('.copy-btn').classList.add('copied');
+    document.querySelector('.copy-btn').textContent = '✓ Code kopiert!';
+    showToast('Code kopiert!');
+  }).catch(() => {
+    // Fallback: select text
+    showToast(`Dein Code: ${code}`);
+  });
+}
+
+function openDeepLink() {
+  // iframe trick: triggers custom scheme without navigating the page
+  // → if app is installed it opens; if not, the browser silently ignores it
+  const fr = document.createElement('iframe');
+  fr.style.display = 'none';
+  fr.src = `balltogether://invite/${encodeURIComponent(code)}/${encodeURIComponent(pref)}`;
+  document.body.appendChild(fr);
+  setTimeout(() => fr.remove(), 2000);
+}
+
+function renderNoCode() {
+  main.innerHTML = `
+    <div class="no-code">
+      <svg width="56" height="56" viewBox="0 0 48 48" style="margin:0 auto 18px;display:block">
+        <circle cx="24" cy="24" r="21" fill="var(--orange-soft)"/>
+        <g fill="none" stroke="var(--orange)" stroke-width="2.2">
+          <path d="M3 24h42"/><path d="M24 3v42"/>
+          <path d="M9 9c7 6 7 24 0 30"/><path d="M39 9c-7 6-7 24 0 30"/>
+        </g>
+      </svg>
+      <h2>Ungültige Einladung</h2>
+      <p>Dieser Link ist nicht gültig. Bitte bitte deinen Freund, den Link erneut zu teilen.</p>
+      <a href="/" style="display:inline-block;margin-top:24px;color:var(--orange);font-weight:700;">Zur Startseite</a>
+    </div>`;
+}
+
+function renderInvite() {
+  const initial = code ? code[0] : '?';
+  main.innerHTML = `
+    <div class="invite-card">
+      <div class="invite-avatar">${initial}</div>
+      <div class="invite-name">Du wurdest eingeladen!</div>
+      <div class="invite-sub">Jemand möchte mit dir auf Ball together ballen.</div>
+
+      <div class="code-box">
+        <div class="code-label">Dein Einladungscode</div>
+        <div class="code-value" id="codeVal">${code}</div>
+        <button class="copy-btn" onclick="copyCode()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+          Code kopieren
+        </button>
+      </div>
+
+      <div class="store-row">
+        <a class="dl-btn" href="${IOS_URL}" target="_blank" rel="noopener">
+          <img src="https://cdn-icons-png.flaticon.com/256/0/747.png" alt="Apple" />
+          <span>
+            <span class="dl-btn-sub">Laden im</span>
+            <span class="dl-btn-main">App Store</span>
+          </span>
+        </a>
+        <a class="dl-btn" href="${playWithRef}" target="_blank" rel="noopener">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_Play_2022_icon.svg/1920px-Google_Play_2022_icon.svg.png" alt="Google Play" />
+          <span>
+            <span class="dl-btn-sub">Jetzt bei</span>
+            <span class="dl-btn-main">Google Play</span>
+          </span>
+        </a>
+      </div>
+
+      <a class="open-btn" id="openBtn" href="#">
+        App bereits installiert? Hier öffnen →
+      </a>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>App herunterladen</strong><br>iOS App Store oder Google Play — kostenlos.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Konto erstellen</strong><br>Am Ende des Onboardings: Einladungscode eingeben.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Code eingeben</strong><br>Gib <strong style="color:var(--orange);font-family:monospace;letter-spacing:2px">${code}</strong> beim letzten Schritt ein und ihr seid direkt verbunden.</div>
+      </div>
+    </div>
+
+    <footer>
+      <a href="/">Startseite</a>
+      <a href="Datenschutz.html">Datenschutz</a>
+      <a href="Impressum.html">Impressum</a>
+    </footer>`;
+
+  // "Bereits installiert" button: tries deep link
+  document.getElementById('openBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    // Save code to sessionStorage as well (fallback if cookie approach is used later)
+    try { sessionStorage.setItem('bt_invite_code', code); sessionStorage.setItem('bt_invite_pref', pref); } catch {}
+    openDeepLink();
+    // If still here after 2.2s, the app is not installed
+    setTimeout(() => {
+      document.getElementById('openBtn').textContent = 'App nicht installiert? Oben herunterladen.';
+      document.getElementById('openBtn').style.borderColor = 'var(--muted)';
+      document.getElementById('openBtn').style.color = 'var(--muted)';
+      document.getElementById('openBtn').style.background = 'transparent';
+    }, 2200);
+  });
+}
+
+// ── On load: check code, render, try deep link for installed users ──
+if (!code) {
+  renderNoCode();
+} else {
+  renderInvite();
+
+  // On first load, immediately try to open the app (if installed).
+  // On mobile browsers this may open the app silently — user never sees the redirect phase.
+  const deepAttempt = setTimeout(() => {
+    // App didn't open (still here) — no action needed, the page is already shown
+  }, 2500);
+
+  // Try opening the app immediately via iframe (doesn't block the page)
+  setTimeout(openDeepLink, 300);
+
+  // If app opened, the page goes to background → clear timer on visibility change
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearTimeout(deepAttempt);
+  });
+}
+</script>
+</body>
+</html>
