@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.foggystudio.balltogether",
+      "sha256_cert_fingerprints": [
+        "C1:BA:DE:FC:8A:59:1B:11:0C:C5:83:D5:57:A6:2C:3C:B2:6F:6F:3F:F3:53:4E:9D:9E:65:FA:E3:D6:54:96:18"
+      ]
+    }
+  }
+]
